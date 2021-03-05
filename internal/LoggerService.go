@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/wostzone/gateway/pkg/lib"
+	"github.com/wostzone/gateway/pkg/config"
 	"github.com/wostzone/gateway/pkg/messaging"
 )
 
@@ -19,7 +19,7 @@ type WostLoggerConfig struct {
 // WostLogger is a gateway plugin for recording channels
 type WostLogger struct {
 	config      WostLoggerConfig
-	gwConfig    *lib.GatewayConfig
+	gwConfig    *config.GatewayConfig
 	messenger   messaging.IGatewayMessenger
 	fileHandles map[string]*os.File
 }
@@ -63,7 +63,7 @@ func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.I
 }
 
 // Start connects, subscribe and start the recording
-func (wlog *WostLogger) Start(gwConfig *lib.GatewayConfig, recConfig *WostLoggerConfig) error {
+func (wlog *WostLogger) Start(gwConfig *config.GatewayConfig, recConfig *WostLoggerConfig) error {
 	var err error
 	wlog.config = *recConfig
 	wlog.gwConfig = gwConfig

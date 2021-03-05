@@ -10,18 +10,23 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/wostzone/gateway/pkg/lib"
+	"github.com/wostzone/gateway/pkg/config"
 	"github.com/wostzone/gateway/pkg/messaging"
-	"github.com/wostzone/gateway/pkg/messaging/smbserver"
+	"github.com/wostzone/gateway/pkg/smbserver"
 	"github.com/wostzone/logger/internal"
 )
 
 var homeFolder string
 
 const pluginID = "logger-test"
+const loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+	"incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " +
+	"laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate " +
+	"velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, " +
+	"sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 var recConfig *internal.WostLoggerConfig = &internal.WostLoggerConfig{} // use defaults
-var gwConfig *lib.GatewayConfig
+var gwConfig *config.GatewayConfig
 var setupOnce = false
 
 // Use the project app folder during testing
@@ -34,12 +39,12 @@ func setup() {
 	homeFolder = path.Join(cwd, "../dist")
 	recConfig = &internal.WostLoggerConfig{}
 	os.Args = append(os.Args[0:1], strings.Split("", " ")...)
-	gwConfig, _ = lib.SetupConfig(homeFolder, pluginID, recConfig)
+	gwConfig, _ = config.SetupConfig(homeFolder, pluginID, recConfig)
 }
 func teardown() {
 }
 
-func TestStartStopRecorder(t *testing.T) {
+func TestStartStop(t *testing.T) {
 	setup()
 	// recConfig := &internal.WostLoggerConfig{} // use defaults
 	// gwConfig, err := lib.SetupConfig(homeFolder, pluginID, recConfig)
@@ -74,6 +79,7 @@ func TestRecordMessage(t *testing.T) {
 	assert.NoError(t, err)
 
 	client.Publish(messaging.EventsChannelID, []byte("Hello world"))
+	client.Publish(messaging.EventsChannelID, []byte(loremIpsum))
 	time.Sleep(1 * time.Second)
 	client.Disconnect()
 
