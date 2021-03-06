@@ -4,22 +4,23 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-	"github.com/wostzone/gateway/pkg/lib"
+	"github.com/wostzone/gateway/pkg/config"
+	"github.com/wostzone/gateway/pkg/gateway"
 	"github.com/wostzone/logger/internal"
 )
 
-var loggerConfig = &internal.WostLoggerConfig{}
+var pluginConfig = &internal.WostLoggerConfig{}
 
 func main() {
-	gatewayConfig, err := lib.SetupConfig("", internal.LoggerPluginID, loggerConfig)
+	gatewayConfig, err := config.SetupConfig("", internal.PluginID, pluginConfig)
 
 	svc := internal.NewWostLoggerService()
-	err = svc.Start(gatewayConfig, loggerConfig)
+	err = svc.Start(gatewayConfig, pluginConfig)
 	if err != nil {
 		logrus.Errorf("Logger: Failed to start")
 		os.Exit(1)
 	}
-	lib.WaitForSignal()
+	gateway.WaitForSignal()
 	svc.Stop()
 	os.Exit(0)
 }

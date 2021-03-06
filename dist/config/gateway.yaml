@@ -4,8 +4,8 @@
 messenger:
   certsFolder: "../certs" # Use TLS
   #protocol: "smbus" # smbus, MQTT, default smbus
-  #hostname: "localhost:9678" # hostname:port or ip:port to listen on of message bus
-  hostname: "localhost:9999" # do not interfere with production server
+  hostname: "localhost:9678" # hostname:port or ip:port to listen on of message bus
+  # hostname: "localhost:9999" # do not interfere with production server
 
 # Logging
 logging:

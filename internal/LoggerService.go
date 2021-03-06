@@ -11,6 +11,9 @@ import (
 	"github.com/wostzone/gateway/pkg/messaging"
 )
 
+// PluginID is the default ID of the WoST Logger plugin
+const PluginID = "logger"
+
 // WostLoggerConfig with logger plugin configuration
 type WostLoggerConfig struct {
 	Channels []string `yaml:"channels"`
@@ -23,9 +26,6 @@ type WostLogger struct {
 	messenger   messaging.IGatewayMessenger
 	fileHandles map[string]*os.File
 }
-
-// LoggerPluginID is the default ID of the WoST Logger plugin
-const LoggerPluginID = "logger"
 
 // handleChannelMessage receives and records a channel message
 func (wlog *WostLogger) handleChannelMessage(channel string, message []byte) {
@@ -67,7 +67,7 @@ func (wlog *WostLogger) Start(gwConfig *config.GatewayConfig, recConfig *WostLog
 	var err error
 	wlog.config = *recConfig
 	wlog.gwConfig = gwConfig
-	wlog.messenger, err = messaging.StartGatewayMessenger(LoggerPluginID, gwConfig)
+	wlog.messenger, err = messaging.StartGatewayMessenger(PluginID, gwConfig)
 
 	// messaging.NewGatewayConnection(gwConfig.Messenger.Protocol)
 	// load the default channels if config doesn't have any
