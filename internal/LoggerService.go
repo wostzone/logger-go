@@ -29,7 +29,7 @@ type WostLogger struct {
 
 // handleChannelMessage receives and records a channel message
 func (wlog *WostLogger) handleChannelMessage(channel string, message []byte) {
-	logrus.Infof("handleChannelMessage: Received message on channel %s: %s", channel, message)
+	logrus.Infof("Received message on channel %s: %s", channel, message)
 	fileHandle := wlog.fileHandles[channel]
 	if fileHandle != nil {
 		sender := ""
@@ -43,7 +43,7 @@ func (wlog *WostLogger) handleChannelMessage(channel string, message []byte) {
 		n, err := fileHandle.WriteString(line + "\n")
 		_ = n
 		if err != nil {
-			logrus.Errorf("handleChannelMessage: Unable to record channel '%s': %s", channel, err)
+			logrus.Errorf("Unable to record channel '%s': %s", channel, err)
 		}
 	}
 }
@@ -55,7 +55,7 @@ func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.I
 	fileHandle, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0640)
 
 	if err != nil {
-		logrus.Errorf("StartRecordChannel: Unable to open file '%s' for writing: %s. Channel '%s' ignored", filename, err, channel)
+		logrus.Errorf("Unable to open file '%s' for writing: %s. Channel '%s' ignored", filename, err, channel)
 		return
 	}
 	wlog.fileHandles[channel] = fileHandle
@@ -65,6 +65,7 @@ func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.I
 // Start connects, subscribe and start the recording
 func (wlog *WostLogger) Start(gwConfig *config.GatewayConfig, recConfig *WostLoggerConfig) error {
 	var err error
+	wlog.fileHandles = make(map[string]*os.File)
 	wlog.config = *recConfig
 	wlog.gwConfig = gwConfig
 	wlog.messenger, err = messaging.StartGatewayMessenger(PluginID, gwConfig)
@@ -78,13 +79,13 @@ func (wlog *WostLogger) Start(gwConfig *config.GatewayConfig, recConfig *WostLog
 		wlog.StartRecordChannel(channel, wlog.messenger)
 	}
 
-	logrus.Infof("Start: channels: %s", wlog.config.Channels)
+	logrus.Infof("Logging channels: %s", wlog.config.Channels)
 	return err
 }
 
 // Stop the logging
 func (wlog *WostLogger) Stop() {
-	logrus.Info("Recorder Stop: Stopping recorder service")
+	logrus.Info("Stopping logging service")
 	for _, channel := range wlog.config.Channels {
 		wlog.messenger.Unsubscribe(channel)
 	}
@@ -93,12 +94,4 @@ func (wlog *WostLogger) Stop() {
 	}
 	wlog.fileHandles = make(map[string]*os.File)
 
-}
-
-// NewWostLoggerService creates a new logger of WoST gateway messages
-func NewWostLoggerService() *WostLogger {
-	wlog := &WostLogger{
-		fileHandles: make(map[string]*os.File),
-	}
-	return wlog
 }

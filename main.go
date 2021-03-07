@@ -14,7 +14,7 @@ var pluginConfig = &internal.WostLoggerConfig{}
 func main() {
 	gatewayConfig, err := config.SetupConfig("", internal.PluginID, pluginConfig)
 
-	svc := internal.NewWostLoggerService()
+	svc := internal.WostLogger{}
 	err = svc.Start(gatewayConfig, pluginConfig)
 	if err != nil {
 		logrus.Errorf("Logger: Failed to start")

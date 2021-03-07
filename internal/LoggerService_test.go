@@ -52,7 +52,7 @@ func TestStartStop(t *testing.T) {
 	server, err := smbserver.StartSmbServer(gwConfig)
 	require.NoError(t, err)
 
-	svc := internal.NewWostLoggerService()
+	svc := internal.WostLogger{}
 	err = svc.Start(gwConfig, recConfig)
 	assert.NoError(t, err)
 	svc.Stop()
@@ -73,7 +73,7 @@ func TestRecordMessage(t *testing.T) {
 	server, err := smbserver.StartSmbServer(gwConfig)
 	require.NoError(t, err)
 
-	svc := internal.NewWostLoggerService()
+	svc := internal.WostLogger{}
 	err = svc.Start(gwConfig, recConfig)
 	client, err := messaging.StartGatewayMessenger("test1", gwConfig)
 	assert.NoError(t, err)
