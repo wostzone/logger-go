@@ -48,18 +48,20 @@ func (wlog *WostLogger) handleChannelMessage(channel string, message []byte) {
 	}
 }
 
-// StartRecordChannel setup recording of a channel
-func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.IGatewayMessenger) {
+// StartRecordChannel setup recording of a channel.
+// Return error if logfile can't be opened
+func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.IGatewayMessenger) error {
 	logsFolder := path.Dir(wlog.gwConfig.Logging.LogFile)
 	filename := path.Join(logsFolder, channel+".txt")
 	fileHandle, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0640)
 
 	if err != nil {
 		logrus.Errorf("Unable to open file '%s' for writing: %s. Channel '%s' ignored", filename, err, channel)
-		return
+		return err
 	}
 	wlog.fileHandles[channel] = fileHandle
 	messenger.Subscribe(channel, wlog.handleChannelMessage)
+	return nil
 }
 
 // Start connects, subscribe and start the recording
@@ -76,7 +78,8 @@ func (wlog *WostLogger) Start(gwConfig *config.GatewayConfig, recConfig *WostLog
 		wlog.config.Channels = []string{messaging.TDChannelID, messaging.EventsChannelID, messaging.ActionChannelID}
 	}
 	for _, channel := range wlog.config.Channels {
-		wlog.StartRecordChannel(channel, wlog.messenger)
+		err = wlog.StartRecordChannel(channel, wlog.messenger)
+		// keep the last error
 	}
 
 	logrus.Infof("Logging channels: %s", wlog.config.Channels)

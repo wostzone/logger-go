@@ -88,3 +88,35 @@ func TestRecordMessage(t *testing.T) {
 	server.Stop()
 	teardown()
 }
+
+func TestBadLoggingFolder(t *testing.T) {
+	setup()
+
+	// recConfig := &internal.WostLoggerConfig{} // use defaults
+	// os.Args = append(os.Args[0:1], strings.Split("", " ")...)
+	// gwConfig, err := lib.SetupConfig(homeFolder, pluginID, recConfig)
+	// lib.LoadConfig(gwConfig.ConfigFolder+"/gateway.yaml", gwConfig)
+	// gwConfig.Messenger.HostPort = "localhost:9999"
+
+	// assert.NoError(t, err)
+	server, err := smbserver.StartSmbServer(gwConfig)
+	require.NoError(t, err)
+
+	svc := internal.WostLogger{}
+	gwConfig.Logging.LogFile = "/notafolder"
+	err = svc.Start(gwConfig, recConfig)
+	assert.Error(t, err)
+
+	client, err := messaging.StartGatewayMessenger("test1", gwConfig)
+	assert.NoError(t, err)
+
+	client.Publish(messaging.EventsChannelID, []byte("Hello world"))
+	client.Publish(messaging.EventsChannelID, []byte(loremIpsum))
+	time.Sleep(1 * time.Second)
+	client.Disconnect()
+
+	assert.NoError(t, err)
+	svc.Stop()
+	server.Stop()
+	teardown()
+}
