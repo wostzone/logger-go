@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/wostzone/gateway/pkg/config"
-	"github.com/wostzone/gateway/pkg/messaging"
-	"github.com/wostzone/gateway/pkg/smbserver"
+	"github.com/wostzone/hub/pkg/config"
+	"github.com/wostzone/hub/pkg/messaging"
+	"github.com/wostzone/hub/pkg/smbserver"
 	"github.com/wostzone/logger/internal"
 )
 
@@ -26,7 +26,7 @@ const loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
 	"sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 var recConfig *internal.WostLoggerConfig = &internal.WostLoggerConfig{} // use defaults
-var gwConfig *config.GatewayConfig
+var gwConfig *config.HubConfig
 var setupOnce = false
 
 // Use the project app folder during testing
@@ -66,7 +66,7 @@ func TestRecordMessage(t *testing.T) {
 	// recConfig := &internal.WostLoggerConfig{} // use defaults
 	// os.Args = append(os.Args[0:1], strings.Split("", " ")...)
 	// gwConfig, err := lib.SetupConfig(homeFolder, pluginID, recConfig)
-	// lib.LoadConfig(gwConfig.ConfigFolder+"/gateway.yaml", gwConfig)
+	// lib.LoadConfig(gwConfig.ConfigFolder+"/hub.yaml", gwConfig)
 	// gwConfig.Messenger.HostPort = "localhost:9999"
 
 	// assert.NoError(t, err)
@@ -75,7 +75,7 @@ func TestRecordMessage(t *testing.T) {
 
 	svc := internal.WostLogger{}
 	err = svc.Start(gwConfig, recConfig)
-	client, err := messaging.StartGatewayMessenger("test1", gwConfig)
+	client, err := messaging.StartHubMessenger("test1", gwConfig)
 	assert.NoError(t, err)
 
 	client.Publish(messaging.EventsChannelID, []byte("Hello world"))
@@ -95,7 +95,7 @@ func TestBadLoggingFolder(t *testing.T) {
 	// recConfig := &internal.WostLoggerConfig{} // use defaults
 	// os.Args = append(os.Args[0:1], strings.Split("", " ")...)
 	// gwConfig, err := lib.SetupConfig(homeFolder, pluginID, recConfig)
-	// lib.LoadConfig(gwConfig.ConfigFolder+"/gateway.yaml", gwConfig)
+	// lib.LoadConfig(gwConfig.ConfigFolder+"/hub.yaml", gwConfig)
 	// gwConfig.Messenger.HostPort = "localhost:9999"
 
 	// assert.NoError(t, err)
@@ -107,7 +107,7 @@ func TestBadLoggingFolder(t *testing.T) {
 	err = svc.Start(gwConfig, recConfig)
 	assert.Error(t, err)
 
-	client, err := messaging.StartGatewayMessenger("test1", gwConfig)
+	client, err := messaging.StartHubMessenger("test1", gwConfig)
 	assert.NoError(t, err)
 
 	client.Publish(messaging.EventsChannelID, []byte("Hello world"))

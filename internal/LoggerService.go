@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/wostzone/gateway/pkg/config"
-	"github.com/wostzone/gateway/pkg/messaging"
+	"github.com/wostzone/hub/pkg/config"
+	"github.com/wostzone/hub/pkg/messaging"
 )
 
 // PluginID is the default ID of the WoST Logger plugin
@@ -19,11 +19,11 @@ type WostLoggerConfig struct {
 	Channels []string `yaml:"channels"`
 }
 
-// WostLogger is a gateway plugin for recording channels
+// WostLogger is a hub plugin for recording channels
 type WostLogger struct {
 	config      WostLoggerConfig
-	gwConfig    *config.GatewayConfig
-	messenger   messaging.IGatewayMessenger
+	gwConfig    *config.HubConfig
+	messenger   messaging.IHubMessenger
 	fileHandles map[string]*os.File
 }
 
@@ -50,7 +50,7 @@ func (wlog *WostLogger) handleChannelMessage(channel string, message []byte) {
 
 // StartRecordChannel setup recording of a channel.
 // Return error if logfile can't be opened
-func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.IGatewayMessenger) error {
+func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.IHubMessenger) error {
 	logsFolder := path.Dir(wlog.gwConfig.Logging.LogFile)
 	filename := path.Join(logsFolder, channel+".txt")
 	fileHandle, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0640)
@@ -65,14 +65,14 @@ func (wlog *WostLogger) StartRecordChannel(channel string, messenger messaging.I
 }
 
 // Start connects, subscribe and start the recording
-func (wlog *WostLogger) Start(gwConfig *config.GatewayConfig, recConfig *WostLoggerConfig) error {
+func (wlog *WostLogger) Start(gwConfig *config.HubConfig, recConfig *WostLoggerConfig) error {
 	var err error
 	wlog.fileHandles = make(map[string]*os.File)
 	wlog.config = *recConfig
 	wlog.gwConfig = gwConfig
-	wlog.messenger, err = messaging.StartGatewayMessenger(PluginID, gwConfig)
+	wlog.messenger, err = messaging.StartHubMessenger(PluginID, gwConfig)
 
-	// messaging.NewGatewayConnection(gwConfig.Messenger.Protocol)
+	// messaging.NewHubConnection(gwConfig.Messenger.Protocol)
 	// load the default channels if config doesn't have any
 	if wlog.config.Channels == nil || len(wlog.config.Channels) == 0 {
 		wlog.config.Channels = []string{messaging.TDChannelID, messaging.EventsChannelID, messaging.ActionChannelID}

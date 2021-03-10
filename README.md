@@ -1,11 +1,11 @@
-# WoST Gateway Logger
+# WoST Hub Logger
 
-Simple logger of messages on the gateway internal message bus, intended for testing of plugins.
+Simple logger of messages on the hub internal message bus, intended for testing of plugins.
 
 
 ## Objective
 
-Facilitate the development of plugins by logging messages on the gateway internal message bus.
+Facilitate the development of plugins by logging messages on the hub internal message bus.
 
 
 ## Status 
@@ -22,7 +22,7 @@ This project is aimed at software developers, system implementors and people wit
 
 ## Summary
 
-Gateway plugins communicate TD's, events and actions over the internal message bus. This plugin writes those message channels to file.
+Hub plugins communicate TD's, events and actions over the internal message bus. This plugin writes those message channels to file.
 
 This simple plugin also serves as an example on writing plugins.
 
@@ -31,12 +31,12 @@ This simple plugin also serves as an example on writing plugins.
 
 ### System Requirements
 
-This plugin runs as part of the WoST gateway. It has no additional requirements other than a working gateway.
+This plugin runs as part of the WoST hub. It has no additional requirements other than a working hub.
 
 
 ### Manual Installation
 
-See the gateway README on plugin installation.
+See the hub README on plugin installation.
 
 
 ### Build From Source
@@ -46,8 +46,8 @@ Build with:
 make all
 ```
 
-The plugin can be found in dist/bin for 64bit intel or amd processors, or dist/arm for 64 bit ARM processors. Copy this to the gateway bin or arm directory.
-An example configuration file is provided in config/logger.yaml. Copy this to the gateway config directory.
+The plugin can be found in dist/bin for 64bit intel or amd processors, or dist/arm for 64 bit ARM processors. Copy this to the hub bin or arm directory.
+An example configuration file is provided in config/logger.yaml. Copy this to the hub config directory.
 
 ## Usage
 
